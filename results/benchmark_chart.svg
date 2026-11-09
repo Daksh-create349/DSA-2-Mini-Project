@@ -27,18 +27,18 @@ text { font-family: Arial, sans-serif; fill: #172033; }
 <text x="95.0" y="305" text-anchor="middle" class="tick">1,000</text>
 <text x="352.6" y="305" text-anchor="middle" class="tick">10,000</text>
 <text x="925.0" y="305" text-anchor="middle" class="tick">30,000</text>
-<polyline points="95.0,173.9 352.6,137.1 925.0,118.5" fill="none" stroke="#2563EB" stroke-width="3" stroke-dasharray=""/>
+<polyline points="95.0,173.9 352.6,136.7 925.0,120.1" fill="none" stroke="#2563EB" stroke-width="3" stroke-dasharray=""/>
 <circle cx="95.0" cy="173.9" r="4" fill="#2563EB"/>
-<circle cx="352.6" cy="137.1" r="4" fill="#2563EB"/>
-<circle cx="925.0" cy="118.5" r="4" fill="#2563EB"/>
-<polyline points="95.0,232.7 352.6,231.2 925.0,229.6" fill="none" stroke="#EA580C" stroke-width="3" stroke-dasharray="8 4"/>
-<circle cx="95.0" cy="232.7" r="4" fill="#EA580C"/>
-<circle cx="352.6" cy="231.2" r="4" fill="#EA580C"/>
-<circle cx="925.0" cy="229.6" r="4" fill="#EA580C"/>
-<polyline points="95.0,208.5 352.6,202.6 925.0,192.5" fill="none" stroke="#15803D" stroke-width="3" stroke-dasharray="2 4"/>
-<circle cx="95.0" cy="208.5" r="4" fill="#15803D"/>
-<circle cx="352.6" cy="202.6" r="4" fill="#15803D"/>
-<circle cx="925.0" cy="192.5" r="4" fill="#15803D"/>
+<circle cx="352.6" cy="136.7" r="4" fill="#2563EB"/>
+<circle cx="925.0" cy="120.1" r="4" fill="#2563EB"/>
+<polyline points="95.0,232.5 352.6,232.0 925.0,232.1" fill="none" stroke="#EA580C" stroke-width="3" stroke-dasharray="8 4"/>
+<circle cx="95.0" cy="232.5" r="4" fill="#EA580C"/>
+<circle cx="352.6" cy="232.0" r="4" fill="#EA580C"/>
+<circle cx="925.0" cy="232.1" r="4" fill="#EA580C"/>
+<polyline points="95.0,196.9 352.6,203.2 925.0,201.2" fill="none" stroke="#15803D" stroke-width="3" stroke-dasharray="2 4"/>
+<circle cx="95.0" cy="196.9" r="4" fill="#15803D"/>
+<circle cx="352.6" cy="203.2" r="4" fill="#15803D"/>
+<circle cx="925.0" cy="201.2" r="4" fill="#15803D"/>
 <text x="510" y="327" text-anchor="middle" class="label">Array size n</text>
 <text transform="translate(22,195.0) rotate(-90)" text-anchor="middle" class="label">Seconds per query (log scale)</text><text x="510" y="365" text-anchor="middle" class="title">Median average time per point update</text>
 <line x1="95" y1="385" x2="95" y2="565" class="axis"/>
@@ -62,17 +62,17 @@ text { font-family: Arial, sans-serif; fill: #172033; }
 <text x="95.0" y="585" text-anchor="middle" class="tick">1,000</text>
 <text x="352.6" y="585" text-anchor="middle" class="tick">10,000</text>
 <text x="925.0" y="585" text-anchor="middle" class="tick">30,000</text>
-<polyline points="95.0,538.0 352.6,537.8 925.0,537.6" fill="none" stroke="#2563EB" stroke-width="3" stroke-dasharray=""/>
-<circle cx="95.0" cy="538.0" r="4" fill="#2563EB"/>
-<circle cx="352.6" cy="537.8" r="4" fill="#2563EB"/>
-<circle cx="925.0" cy="537.6" r="4" fill="#2563EB"/>
-<polyline points="95.0,433.5 352.6,403.2 925.0,388.9" fill="none" stroke="#EA580C" stroke-width="3" stroke-dasharray="8 4"/>
-<circle cx="95.0" cy="433.5" r="4" fill="#EA580C"/>
-<circle cx="352.6" cy="403.2" r="4" fill="#EA580C"/>
-<circle cx="925.0" cy="388.9" r="4" fill="#EA580C"/>
-<polyline points="95.0,508.5 352.6,503.7 925.0,501.3" fill="none" stroke="#15803D" stroke-width="3" stroke-dasharray="2 4"/>
-<circle cx="95.0" cy="508.5" r="4" fill="#15803D"/>
-<circle cx="352.6" cy="503.7" r="4" fill="#15803D"/>
-<circle cx="925.0" cy="501.3" r="4" fill="#15803D"/>
+<polyline points="95.0,537.8 352.6,538.2 925.0,536.8" fill="none" stroke="#2563EB" stroke-width="3" stroke-dasharray=""/>
+<circle cx="95.0" cy="537.8" r="4" fill="#2563EB"/>
+<circle cx="352.6" cy="538.2" r="4" fill="#2563EB"/>
+<circle cx="925.0" cy="536.8" r="4" fill="#2563EB"/>
+<polyline points="95.0,426.3 352.6,403.8 925.0,390.0" fill="none" stroke="#EA580C" stroke-width="3" stroke-dasharray="8 4"/>
+<circle cx="95.0" cy="426.3" r="4" fill="#EA580C"/>
+<circle cx="352.6" cy="403.8" r="4" fill="#EA580C"/>
+<circle cx="925.0" cy="390.0" r="4" fill="#EA580C"/>
+<polyline points="95.0,500.0 352.6,503.9 925.0,502.7" fill="none" stroke="#15803D" stroke-width="3" stroke-dasharray="2 4"/>
+<circle cx="95.0" cy="500.0" r="4" fill="#15803D"/>
+<circle cx="352.6" cy="503.9" r="4" fill="#15803D"/>
+<circle cx="925.0" cy="502.7" r="4" fill="#15803D"/>
 <text x="510" y="607" text-anchor="middle" class="label">Array size n</text>
 <text transform="translate(22,475.0) rotate(-90)" text-anchor="middle" class="label">Seconds per update (log scale)</text><line x1="340" y1="621" x2="364" y2="621" stroke="#2563EB" stroke-width="3" stroke-dasharray=""/><text x="370" y="625" class="label">Linear Scan</text><line x1="485" y1="621" x2="509" y2="621" stroke="#EA580C" stroke-width="3" stroke-dasharray="8 4"/><text x="515" y="625" class="label">Sparse Table</text><line x1="630" y1="621" x2="654" y2="621" stroke="#15803D" stroke-width="3" stroke-dasharray="2 4"/><text x="660" y="625" class="label">Segment Tree</text></svg>

@@ -2,11 +2,15 @@
 
 ## Algorithm Design, Correctness Tests, and Benchmark Report
 
-**Case Study No. 02 — Segment Trees & Sparse Tables**  
-**Prepared:** November 9, 2026  
+**Case Study No. 02 — Segment Trees & Sparse Tables**
+
+**Prepared:** November 9, 2026
+
 **Purpose:** Compare three range-minimum-query approaches and recommend a suitable data structure for a workload that may include point updates.
 
 **Prepared by:** Daksh Srivastava, Prathamesh More, Yuvraj Mishra, Biswajeet Rout, Sumit Shingole
+
+![Road-quality range query example](../results/road_scenario.png)
 
 ---
 
@@ -44,6 +48,7 @@ All three implementations passed the included correctness tests. The benchmark u
 - Values can be negative, repeated, or positive. The benchmark uses integer scores.
 - Each implementation copies the input list, so later changes to the caller’s list do not silently alter the structure.
 - A sparse-table point update rebuilds its preprocessing table. This is intentionally simple and correct, but expensive; it is not presented as a dynamic sparse-table algorithm.
+- Disconnected components and unreachable states do not apply: the input is a one-dimensional array, not a graph.
 
 ### Success criteria
 
@@ -75,7 +80,7 @@ UPDATE(index, value):
 
 **Why it is correct:** after the loop has visited through index `i`, `smallest` is the minimum of all visited values from `left` through `i`. The loop visits every element in the requested inclusive interval, so the final value is its minimum. An update directly replaces one stored element.
 
-**Complexity:** build `O(n)` including the input copy; query `O(k)` for a range of length `k` (worst case `O(n)`); point update `O(1)`; auxiliary storage `O(n)` for the copied array.
+**Complexity:** build `O(n)` including the input copy; query `O(k)` for a range of length `k` (worst case `O(n)`); point update `O(1)`. The copied input array uses `O(n)` storage, while a query uses only `O(1)` additional workspace.
 
 ### 3.2 Sparse table
 
@@ -175,25 +180,37 @@ Values are generated deterministically as integers in `[-100,000, 100,000]`. A f
 
 Build time is the median of five measurements. Average query time is measured over three passes through the same query set; the reported value is the median per-query time from five runs. Average update time is similarly measured and reported as the median per-update time from five runs. Structure construction is outside the query and update timers. Peak build allocation is measured separately with `tracemalloc`; it is approximate Python-traced memory for the structure build and excludes the already-existing input array and interpreter baseline.
 
-**Environment for the recorded run:** Python 3.9.6, macOS 27.0.1, Apple Silicon arm64. Timings are wall-clock measurements and can vary with hardware, background load, and Python version. They are evidence for this workload, not universal constants.
+**Environment:** the local runtime and system version were verified as Python 3.9.6, macOS 27.0.1 (build 26A434), arm64. These are the environment details recorded for the benchmark. Timings are wall-clock measurements and can vary with hardware, background load, and Python version. They are evidence for this workload, not universal constants.
 
 ## 6. Measured results
 
-The following are the actual results from the included benchmark run. Times are seconds; “peak build” is approximate KiB of traced Python allocations.
+The measurements below reproduce the CSV field values exactly; times are seconds and peak build allocation is in bytes as reported by `tracemalloc`. The allocation measure is approximate Python-traced memory, not process resident memory.
 
-| Approach | n | Queries | Updates | Build (s) | Avg query (s) | Avg update (s) | Peak build (KiB) |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Linear Scan | 1,000 | 300 | 20 | 0.000000916 | 0.000012163 | 0.000000112 | 8.0 |
-| Sparse Table | 1,000 | 300 | 20 | 0.00131271 | 0.000000283 | 0.00130543 | 101.9 |
-| Segment Tree | 1,000 | 300 | 20 | 0.000197625 | 0.000001329 | 0.000001571 | 24.2 |
-| Linear Scan | 10,000 | 300 | 20 | 0.000013416 | 0.000128625 | 0.000000115 | 78.3 |
-| Sparse Table | 10,000 | 300 | 20 | 0.0185985 | 0.000000312 | 0.0196605 | 1,328.5 |
-| Segment Tree | 10,000 | 300 | 20 | 0.00356742 | 0.000001943 | 0.000002415 | 334.5 |
-| Linear Scan | 30,000 | 200 | 10 | 0.000032625 | 0.000422677 | 0.000000117 | 234.5 |
-| Sparse Table | 30,000 | 200 | 10 | 0.0623089 | 0.000000345 | 0.0707280 | 4,219.1 |
-| Segment Tree | 30,000 | 200 | 10 | 0.00681229 | 0.000003711 | 0.000002996 | 746.7 |
+#### Array size 1,000 (300 queries, 20 updates)
 
-![Color-coded RMQ query and point-update benchmark chart. Both panels use a logarithmic time axis.](../results/benchmark_chart.png)
+| Approach | Build (s) | Avg query (s) | Avg update (s) | Peak build (bytes) |
+|---|---:|---:|---:|---:|
+| Linear Scan | 9.580000000022904e-07 | 1.2189027777777775e-05 | 1.1455000000007432e-07 | 8144 |
+| Sparse Table | 0.0013421249999999996 | 2.874999999999714e-07 | 0.0024850416499999986 | 104376 |
+| Segment Tree | 0.0001979590000000253 | 2.7920377777777993e-06 | 3.3770500000002144e-06 | 24764 |
+
+#### Array size 10,000 (300 queries, 20 updates)
+
+| Approach | Build (s) | Avg query (s) | Avg update (s) | Peak build (bytes) |
+|---|---:|---:|---:|---:|
+| Linear Scan | 2.449999999998287e-05 | 0.00013146314777777785 | 1.1039999999740147e-07 | 80144 |
+| Sparse Table | 0.01919770800000009 | 2.968988888888783e-07 | 0.018523210450000004 | 1360376 |
+| Segment Tree | 0.0028473749999999853 | 1.869398888888855e-06 | 2.3729000000027865e-06 | 342524 |
+
+#### Array size 30,000 (200 queries, 10 updates)
+
+| Approach | Build (s) | Avg query (s) | Avg update (s) | Peak build (bytes) |
+|---|---:|---:|---:|---:|
+| Linear Scan | 3.191700000026998e-05 | 0.0003804334716666672 | 1.2499999995085887e-07 | 240144 |
+| Sparse Table | 0.0634006660000006 | 2.944450000012348e-07 | 0.06376233330000006 | 4320376 |
+| Segment Tree | 0.006247708000000074 | 2.133193333332765e-06 | 2.6541000000435135e-06 | 764668 |
+
+![Color-coded RMQ query and point-update benchmark chart. Both panels use a logarithmic time axis.](../results/benchmark_chart.svg)
 
 The complete unrounded machine-readable results are in [benchmark_results.csv](../results/benchmark_results.csv). Regenerate the data and graphs with [benchmark.py](../tools/benchmark.py).
 
@@ -201,21 +218,27 @@ The complete unrounded machine-readable results are in [benchmark_results.csv](.
 
 ### Query performance
 
-The sparse table had the smallest measured query time at every size: about 0.0000003 seconds per query in this run. This follows its `O(1)` query complexity. Its query time barely changes as `n` grows because it needs only two precomputed table lookups and one minimum operation.
+The sparse table had the smallest measured query time at every tested size, consistent with its `O(1)` query complexity. Its query procedure needs only two precomputed table lookups and one minimum operation.
 
-The segment tree’s query time increased from about 0.0000013 seconds at `n = 1,000` to about 0.0000037 seconds at `n = 30,000`, consistent with `O(log n)`. It is still very fast for this workload.
+The segment tree’s query time increases with the logarithmic tree height, consistent with `O(log n)`, and remains low for this tested workload.
 
-The linear scan was initially simple and inexpensive to build, but its average query time rose from about 0.000012 seconds to about 0.000423 seconds as array size and query spans grew. This is the expected cost of checking each value in the requested interval. A shorter-range-only workload would make it look better; a workload dominated by full-array queries would make it worse.
+The linear scan’s average query time grows with the number of values inspected. A short-range workload or very small array can make it sufficient, while broad ranges and repeated queries require more scanning.
 
 ### Update performance
 
-The linear scan updates one array element directly, so its update time is effectively constant and very small. The sparse table update took about 0.0013 seconds at `n = 1,000` and about 0.0707 seconds at `n = 30,000`, because this implementation rebuilds the full table after each change. The segment tree updates remained around 0.0000016–0.0000030 seconds because it recalculates only one path from a leaf to the root.
+The linear scan updates one array element directly, so its update work is constant. Sparse-table updates are substantially more expensive in the recorded measurements because this implementation rebuilds the full table after each change. Segment-tree updates recalculate only one path from a leaf to the root.
 
 ### Memory and total workload trade-off
 
-The sparse table’s query advantage comes with a clear memory and update cost. At `n = 30,000`, its measured traced build allocation was about 4,219 KiB, compared with about 747 KiB for the segment tree. These are Python allocation measurements, not exact resident-memory totals, but they show the expected difference: `O(n log n)` storage versus `O(n)`.
+The sparse table’s query advantage comes with a memory and update cost. The recorded traced build allocation is greater for the sparse table than for the segment tree at every tested size, consistent with their `O(n log n)` and `O(n)` space requirements.
 
-Consequently, a “fastest query” claim is not by itself enough to choose a structure. A static dataset queried many times may justify the sparse table. A changing dataset that needs both operations benefits from the segment tree. A tiny dataset, or one with very few queries and a priority on simplicity, may be adequately served by a linear scan.
+The choice depends on the workload:
+
+- **Sparse table:** preferable for static data with many range queries, when query speed is the priority and updates are absent or rare.
+- **Linear scan:** sufficient for small arrays or very few queries, where its simplicity can outweigh the cost of scanning each range.
+- **Segment tree:** preferable when frequent point updates and range queries are both required, because each takes `O(log n)` time without rebuilding the complete structure.
+
+A segment tree is less suitable for static data with many queries when a sparse table’s `O(1)` query time is more valuable, and it can be unnecessary overhead for a tiny array or a handful of operations that a linear scan handles simply.
 
 ### Correctness, edge cases, and implementation effort
 
@@ -235,13 +258,15 @@ The theoretical behavior and the measured evidence point to the same workload-de
 
 ## Submission files
 
-- [01_linear_scan.py](../src/01_linear_scan.py) — linear-scan implementation.
-- [02_sparse_table.py](../src/02_sparse_table.py) — sparse-table implementation with rebuild-on-update.
-- [03_segment_tree.py](../src/03_segment_tree.py) — segment-tree implementation.
-- [test_rmq.py](../tests/test_rmq.py) — correctness and edge-case tests.
-- [benchmark.py](../tools/benchmark.py) — reproducible benchmark and correctness checks.
-- [benchmark_results.csv](../results/benchmark_results.csv) — raw benchmark output.
-- [benchmark_chart.svg](../results/benchmark_chart.svg) — labelled query/update comparison graph.
-- [presentation.md](../presentation/slides_outline.md) — four-slide presentation summary.
-- [presentation.html](../presentation/index.html) — printable, browser-based four-slide deck.
+- [src/01_linear_scan.py](../src/01_linear_scan.py) — linear-scan implementation.
+- [src/02_sparse_table.py](../src/02_sparse_table.py) — sparse-table implementation with rebuild-on-update.
+- [src/03_segment_tree.py](../src/03_segment_tree.py) — segment-tree implementation.
+- [tests/test_rmq.py](../tests/test_rmq.py) — correctness and edge-case tests.
+- [tools/benchmark.py](../tools/benchmark.py) — reproducible benchmark and correctness checks.
+- [results/benchmark_results.csv](../results/benchmark_results.csv) — raw benchmark output.
+- [results/benchmark_chart.svg](../results/benchmark_chart.svg) — query/update comparison graph generated by the benchmark.
+- [presentation/slides_outline.md](../presentation/slides_outline.md) — presentation outline.
+- [presentation/index.html](../presentation/index.html) — browser-based presentation.
+- [presentation/range_minimum_presentation.pdf](../presentation/range_minimum_presentation.pdf) — presentation PDF.
 - [README.md](../README.md) — run instructions.
+- [docs/report.md](./report.md), [docs/report.docx](./report.docx), and [docs/report.pdf](./report.pdf) — this report in source and submission formats.
