@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Range Minimum Query — Case Study 02</title>
+  <style>
+    :root {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #14213d;
+      background: #eef2f7;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; }
+
+    .toolbar {
+      position: fixed;
+      z-index: 10;
+      top: 0;
+      right: 0;
+      left: 0;
+      display: flex;
+      justify-content: flex-end;
+      padding: 12px 24px;
+      border-bottom: 1px solid #999;
+      background: #fff;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: 1px solid #1d4ed8;
+      border-radius: 3px;
+      background: #1d4ed8;
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:hover { background: #1e40af; }
+    .deck { display: grid; gap: 24px; justify-items: center; padding: 76px 24px 24px; }
+
+    .slide {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: min(100%, 1280px);
+      aspect-ratio: 16 / 9;
+      min-height: 620px;
+      padding: 5.2% 6%;
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      box-shadow: 0 8px 24px #14213d18;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: #1d4ed8;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    h1 { max-width: 840px; margin: 0 0 20px; font-size: clamp(36px, 4vw, 58px); line-height: 1.08; }
+    h2 { margin: 0 0 18px; font-size: clamp(30px, 3.2vw, 43px); }
+    h3 { margin: 0 0 8px; font-size: 20px; }
+    p, li { font-size: clamp(16px, 1.5vw, 21px); line-height: 1.4; }
+    p { margin: 0 0 12px; }
+    ul { margin: 6px 0 14px; padding-left: 1.2em; }
+    li { margin: 4px 0; }
+    a { color: #1d4ed8; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    code { font-family: "Courier New", monospace; }
+
+    .cover-layout { display: grid; grid-template-columns: 1.2fr .8fr; gap: 24px; align-items: center; }
+    .cover-layout h1 { max-width: 700px; margin-bottom: 14px; font-size: clamp(34px, 3.2vw, 46px); }
+    .cover-layout p, .cover-layout li { font-size: clamp(16px, 1.25vw, 18px); }
+    .cover-layout ul { margin-bottom: 8px; }
+    .cover-illustration { width: 100%; max-height: 220px; }
+    .authors { font-size: clamp(15px, 1.15vw, 17px); }
+    .callout {
+      margin-top: auto;
+      padding: 15px 19px;
+      border: 1px solid #93c5fd;
+      border-left: 5px solid #2563eb;
+      background: #eff6ff;
+      font-size: 18px;
+      line-height: 1.4;
+    }
+
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .card { padding: 16px; border: 1px solid #cbd5e1; border-top: 4px solid #2563eb; background: #fff; }
+    .card:nth-child(2) { border-top-color: #ea580c; }
+    .card:nth-child(3) { border-top-color: #15803d; }
+    .card svg { display: block; width: 100%; height: 110px; margin: 2px 0 12px; }
+    .card p { margin: 7px 0; font-size: 16px; }
+    .complexity { font-weight: 700; }
+
+    table { width: 100%; border-collapse: collapse; margin: 4px 0 12px; font-size: clamp(13px, 1.2vw, 16px); }
+    th, td { padding: 8px 10px; border: 1px solid #aeb9c8; text-align: left; }
+    th { background: #dbeafe; color: #14213d; }
+    .evidence { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 16px; }
+    .evidence img { width: 100%; max-height: 290px; object-fit: contain; }
+    .small { color: #475569; font-size: 14px; }
+    .recommendation { padding: 17px 20px; border: 1px solid #86efac; border-left: 5px solid #15803d; background: #f0fdf4; }
+    .links { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 10px; font-size: 16px; }
+    .footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 16px; color: #475569; font-size: 13px; }
+    .nav { display: flex; gap: 8px; }
+    .nav a { padding: 6px 10px; border: 1px solid #94a3b8; border-radius: 3px; text-decoration: none; }
+    .nav a:hover { background: #dbeafe; }
+
+    @media (max-width: 760px) {
+      .deck { padding: 70px 10px 10px; }
+      .slide { min-height: 760px; aspect-ratio: auto; padding: 28px 22px; }
+      .cover-layout, .cards, .evidence { grid-template-columns: 1fr; }
+      .cover-illustration { max-height: 180px; }
+      .card svg { height: 80px; }
+      .evidence img { max-height: 220px; }
+      table { font-size: 12px; }
+      th, td { padding: 6px 5px; }
+    }
+
+    @media print {
+      @page { size: 13.333in 7.5in; margin: 0; }
+      :root { background: #fff; }
+      .toolbar, .nav { display: none !important; }
+      .deck { display: block; padding: 0; }
+      .slide {
+        width: 13.333in;
+        height: 7.5in;
+        min-height: 0;
+        aspect-ratio: auto;
+        padding: .55in .72in;
+        border: 0;
+        box-shadow: none;
+        page-break-after: always;
+        break-after: page;
+      }
+      .slide:last-child { page-break-after: auto; break-after: auto; }
+      a { color: #111; }
+    }
+  </style>
+</head>
+<body>
+  <header class="toolbar">
+    <button type="button" onclick="window.print()" aria-label="Print or save the slide deck as a PDF">Print / Save as PDF</button>
+  </header>
+
+  <main class="deck" aria-label="Four-slide RMQ presentation">
+    <section class="slide" id="slide-1" aria-labelledby="title-1">
+      <p class="eyebrow">Case Study No. 02 · Segment Trees &amp; Sparse Tables</p>
+      <div class="cover-layout">
+        <div>
+          <h1 id="title-1">Range Minimum Query with Point Updates</h1>
+          <p>A road-quality monitor stores a score for every road segment. It needs to find the lowest score within a chosen range and reflect new inspection results as they arrive.</p>
+          <ul>
+            <li><strong>Range query:</strong> minimum in inclusive range <code>[left, right]</code>.</li>
+            <li><strong>Point update:</strong> replace one score at a zero-based index.</li>
+            <li><strong>Goal:</strong> compare correctness, speed, update cost, and memory.</li>
+          </ul>
+          <p class="authors"><strong>Prepared by:</strong><br>Daksh Srivastava · Prathamesh More · Yuvraj Mishra · Biswajeet Rout · Sumit Shingole</p>
+        </div>
+        <svg class="cover-illustration" viewBox="0 0 500 300" role="img" aria-labelledby="road-title road-desc">
+          <title id="road-title">Illustration of scored road segments</title>
+          <desc id="road-desc">A road divided into segments with measured scores, motivating range minimum queries.</desc>
+          <rect x="22" y="58" width="456" height="184" rx="12" fill="#263449" stroke="#1d4ed8" stroke-width="3"/>
+          <path d="M35 116 H465 M35 184 H465" stroke="#64748b" stroke-width="2"/>
+          <path d="M35 150 H465" stroke="#facc15" stroke-width="3" stroke-dasharray="14 12"/>
+          <path d="M108 60 V240 M184 60 V240 M260 60 V240 M336 60 V240 M412 60 V240" stroke="#777" stroke-width="1.5"/>
+          <g font-family="Arial" font-size="16" text-anchor="middle" fill="white">
+            <text x="70" y="93">8</text><text x="146" y="93">5</text><text x="222" y="93">9</text>
+            <text x="298" y="93" fill="#fb923c">3</text><text x="374" y="93">7</text><text x="445" y="93">2</text>
+            <text x="70" y="222">Segment 0</text><text x="222" y="222">Segment 2</text><text x="374" y="222">Segment 4</text>
+          </g>
+          <path d="M151 258 V278 H373 V258" fill="none" stroke="#ea580c" stroke-width="3"/>
+          <text x="300" y="296" text-anchor="middle" font-family="Arial" font-size="15" fill="#14213d">Query a range → return its lowest score</text>
+        </svg>
+      </div>
+      <div class="callout"><strong>Question:</strong> Which method is most suitable when the scores can change?</div>
+      <div class="footer"><span>Range Minimum Query benchmark</span><span class="nav"><a href="#slide-2">Next →</a></span></div>
+    </section>
+
+    <section class="slide" id="slide-2" aria-labelledby="title-2">
+      <p class="eyebrow">The approaches</p>
+      <h2 id="title-2">Three ways to find the minimum</h2>
+      <div class="cards">
+        <article class="card">
+          <h3>1 · Linear scan</h3>
+          <svg viewBox="0 0 300 110" role="img" aria-label="A scan passing across array cells">
+            <g fill="#dbeafe" stroke="#2563eb" stroke-width="2">
+              <rect x="10" y="34" width="42" height="36"/><rect x="56" y="34" width="42" height="36"/>
+              <rect x="102" y="34" width="42" height="36"/><rect x="148" y="34" width="42" height="36"/>
+              <rect x="194" y="34" width="42" height="36"/><rect x="240" y="34" width="42" height="36"/>
+            </g>
+            <path d="M20 88 H274 M266 80 L274 88 L266 96" fill="none" stroke="#2563eb" stroke-width="3"/>
+            <text x="150" y="22" text-anchor="middle" font-family="Arial" font-size="13">Check each value in the range</text>
+          </svg>
+          <p class="complexity">Query O(n) · Update O(1)</p>
+          <p>Simple reference solution; suitable for tiny data or few queries.</p>
+        </article>
+        <article class="card">
+          <h3>2 · Sparse table</h3>
+          <svg viewBox="0 0 300 110" role="img" aria-label="Precomputed overlapping intervals">
+            <g fill="#ffedd5" stroke="#ea580c" stroke-width="2">
+              <rect x="20" y="72" width="42" height="24"/><rect x="64" y="72" width="42" height="24"/>
+              <rect x="108" y="72" width="42" height="24"/><rect x="152" y="72" width="42" height="24"/>
+              <rect x="196" y="72" width="42" height="24"/><rect x="240" y="72" width="42" height="24"/>
+              <rect x="20" y="42" width="86" height="24"/><rect x="108" y="42" width="86" height="24"/>
+              <rect x="196" y="42" width="86" height="24"/>
+              <rect x="20" y="12" width="174" height="24"/>
+            </g>
+            <text x="237" y="28" font-family="Arial" font-size="12">Precompute blocks</text>
+          </svg>
+          <p class="complexity">Query O(1) · Update O(n log n)*</p>
+          <p>Fast for static data; this version rebuilds after a change.</p>
+        </article>
+        <article class="card">
+          <h3>3 · Segment tree</h3>
+          <svg viewBox="0 0 300 110" role="img" aria-label="Tree of interval minimum values">
+            <g fill="#dcfce7" stroke="#15803d" stroke-width="2">
+              <path d="M150 31 L83 61 M150 31 L217 61 M83 72 L48 94 M83 72 L118 94 M217 72 L182 94 M217 72 L252 94"/>
+              <circle cx="150" cy="24" r="15"/><circle cx="83" cy="66" r="14"/><circle cx="217" cy="66" r="14"/>
+              <circle cx="48" cy="96" r="11"/><circle cx="118" cy="96" r="11"/><circle cx="182" cy="96" r="11"/><circle cx="252" cy="96" r="11"/>
+            </g>
+            <text x="150" y="28" text-anchor="middle" font-family="Arial" font-size="12">min</text>
+            <text x="83" y="70" text-anchor="middle" font-family="Arial" font-size="12">min</text>
+            <text x="217" y="70" text-anchor="middle" font-family="Arial" font-size="12">min</text>
+          </svg>
+          <p class="complexity">Query O(log n) · Update O(log n)</p>
+          <p>Balanced option when queries and point updates both matter.</p>
+        </article>
+      </div>
+      <div class="callout"><strong>Memory:</strong> linear scan and segment tree use O(n); sparse table uses O(n log n).<br><span class="small">*This sparse-table implementation rebuilds the full table after each update.</span></div>
+      <div class="footer"><span>Worst-case complexity</span><span class="nav"><a href="#slide-1">← Previous</a><a href="#slide-3">Next →</a></span></div>
+    </section>
+
+    <section class="slide" id="slide-3" aria-labelledby="title-3">
+      <p class="eyebrow">Experimental evidence</p>
+      <h2 id="title-3">Query speed versus update cost</h2>
+      <div class="evidence">
+        <div>
+          <table>
+            <thead><tr><th>Array size</th><th>Linear query</th><th>Sparse query</th><th>Tree query</th></tr></thead>
+            <tbody>
+              <tr><td>1,000</td><td>12.163 µs</td><td>0.283 µs</td><td>1.329 µs</td></tr>
+              <tr><td>10,000</td><td>128.625 µs</td><td>0.312 µs</td><td>1.943 µs</td></tr>
+              <tr><td>30,000</td><td>422.677 µs</td><td>0.345 µs</td><td>3.711 µs</td></tr>
+            </tbody>
+          </table>
+          <p><strong>At 30,000 values:</strong> sparse-table update averaged 70.728 ms; segment-tree update averaged 2.996 µs.</p>
+          <p class="small">Same deterministic values and mixed short, medium, and broad ranges. Median timings on Python 3.9.6 / macOS arm64; timing varies by system.</p>
+        </div>
+        <img src="../results/benchmark_chart.svg" alt="Color logarithmic comparison of query and update times by array size">
+      </div>
+      <div class="callout"><strong>Takeaway:</strong> sparse table has the fastest queries, but its full rebuild makes updates expensive. Segment tree keeps both operations fast.</div>
+      <div class="footer"><span><a href="../results/benchmark_results.csv">Full benchmark data (CSV)</a> · <a href="../results/benchmark_chart.svg">Open graph</a></span><span class="nav"><a href="#slide-2">← Previous</a><a href="#slide-4">Next →</a></span></div>
+    </section>
+
+    <section class="slide" id="slide-4" aria-labelledby="title-4">
+      <p class="eyebrow">Conclusion and validation</p>
+      <h2 id="title-4">Recommend the segment tree for changing data</h2>
+      <div class="recommendation">
+        <p><strong>Why:</strong> both range queries and point updates take O(log n), it uses O(n) storage, and it avoids a full-table rebuild.</p>
+        <p><strong>Choose differently when:</strong> data is static and queries dominate (sparse table), or data is tiny and simplicity matters most (linear scan).</p>
+      </div>
+      <p style="margin-top:20px"><strong>Correctness evidence:</strong> all three implementations pass boundary, invalid-input, negative/duplicate, non-power-of-two, update, and randomized tests. The benchmark checks answers against direct minima before timing.</p>
+      <div class="links">
+        <a href="../docs/report.pdf">Written report (PDF)</a>
+        <a href="../docs/report.docx">Written report (DOCX)</a>
+        <a href="../tests/test_rmq.py">Correctness tests</a>
+        <a href="../tools/benchmark.py">Benchmark source</a>
+        <a href="../src/01_linear_scan.py">Linear scan</a>
+        <a href="../src/02_sparse_table.py">Sparse table</a>
+        <a href="../src/03_segment_tree.py">Segment tree</a>
+        <a href="../README.md">Run instructions</a>
+      </div>
+      <div class="footer"><span>Four-slide presentation · Print using the button above</span><span class="nav"><a href="#slide-3">← Previous</a><a href="#slide-1">Back to start ↑</a></span></div>
+    </section>
+  </main>
+</body>
+</html>
