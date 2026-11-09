@@ -137,20 +137,14 @@ Run the benchmark and refresh its CSV and graph:
 python3 tools/benchmark.py
 ```
 
-Regenerate the presentation PDF after changing presentation content:
-
-```bash
-python3 tools/build_presentation.py
-```
-
-The PDF generator requires ReportLab. The ready-to-view presentation is also available as [HTML](presentation/index.html).
+The ready-to-view presentation is available as [HTML](presentation/index.html) and [PDF](presentation/range_minimum_presentation.pdf).
 
 ## Project structure
 
 ```text
 src/             Three RMQ implementations
 tests/           Correctness and edge-case tests
-tools/           Benchmark and presentation PDF generator
+tools/           Benchmark script
 results/         Benchmark data and visualizations
 docs/            Report in Markdown, DOCX, and PDF
 presentation/    Presentation in HTML and PDF
