@@ -8,4 +8,4 @@
 3. **Evidence:** same benchmark workloads, query/update timings, and labelled black-and-white chart.
 4. **Recommendation:** segment tree for changing data; sparse table for static data; linear scan for very small inputs.
 
-Open the [presentation deck](index.html). Its top button prints the four slides or saves them as a PDF. The exported slide deck is also available as [range_minimum_presentation.pdf](range_minimum_presentation.pdf).
+The slide deck is available as [range_minimum_presentation.pdf](range_minimum_presentation.pdf).

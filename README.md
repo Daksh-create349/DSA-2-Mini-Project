@@ -137,7 +137,7 @@ Run the benchmark and refresh its CSV and graph:
 python3 tools/benchmark.py
 ```
 
-The ready-to-view presentation is available as [HTML](presentation/index.html) and [PDF](presentation/range_minimum_presentation.pdf).
+The ready-to-view presentation is available as [PDF](presentation/range_minimum_presentation.pdf).
 
 ## Project structure
 
@@ -146,17 +146,15 @@ src/             Three RMQ implementations
 tests/           Correctness and edge-case tests
 tools/           Benchmark script
 results/         Benchmark data and visualizations
-docs/            Report in Markdown, DOCX, and PDF
-presentation/    Presentation in HTML and PDF
+docs/            Report in DOCX and PDF
+presentation/    Presentation slide deck (PDF)
 ```
 
 ## Deliverables
 
 - [Full report (PDF)](docs/report.pdf)
 - [Full report (DOCX)](docs/report.docx)
-- [Report source (Markdown)](docs/report.md)
 - [Presentation (PDF)](presentation/range_minimum_presentation.pdf)
-- [Presentation (HTML)](presentation/index.html)
 - [Benchmark data (CSV)](results/benchmark_results.csv)
 - [Benchmark graph (PNG)](results/benchmark_chart.png)
 
