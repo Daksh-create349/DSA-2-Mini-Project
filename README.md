@@ -137,15 +137,33 @@ Run the benchmark and refresh its CSV and graph:
 python3 tools/benchmark.py
 ```
 
+### Interactive User-Input Mode
+
+Run any of the three approaches interactively with custom road sizes, scores, query ranges, and point updates:
+
+```bash
+# Linear scan
+python3 interactive/01_linear_scan.py
+
+# Sparse table
+python3 interactive/02_sparse_table.py
+
+# Segment tree (Recommended)
+python3 interactive/03_segment_tree.py
+```
+
+![Interactive terminal execution](results/interactive_demo.png)
+
 The ready-to-view presentation is available as [PDF](presentation/range_minimum_presentation.pdf).
 
 ## Project structure
 
 ```text
-src/             Three RMQ implementations
+src/             Three standard RMQ implementations
+interactive/     Interactive CLI versions with live user input
 tests/           Correctness and edge-case tests
 tools/           Benchmark script
-results/         Benchmark data and visualizations
+results/         Benchmark data, screenshots, and visualizations
 docs/            Report in DOCX and PDF
 presentation/    Presentation slide deck (PDF)
 ```
@@ -157,6 +175,7 @@ presentation/    Presentation slide deck (PDF)
 - [Presentation (PDF)](presentation/range_minimum_presentation.pdf)
 - [Benchmark data (CSV)](results/benchmark_results.csv)
 - [Benchmark graph (PNG)](results/benchmark_chart.png)
+- [Interactive CLI screenshot (PNG)](results/interactive_demo.png)
 
 ## Contributors
 
